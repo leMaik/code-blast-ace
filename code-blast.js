@@ -207,18 +207,26 @@ https://twitter.com/JoelBesada/status/670343885655293952
 		if (canvas) { canvas.remove(); }
 	}
 
-	window.blastCode = function (editor, val) {
-			if (val !== false) {
-				var text = editor.textInput.getElement();
-				text.blastCode = true;
-				effect = (val || {}).effect || 2;
-				cm = editor;
-				cmNode = editor.container;
-				init();
-			} else {
-				var text = editor.textInput.getElement();
-				text.blastCode = false;
-				destroy();
-			}
-		};
+	var Editor = ace.require('ace/editor').Editor;
+	var config = ace.require('ace/config');
+	config.defineOptions(Editor.prototype, 'editor', {
+		blastCode: {
+			set: function (val) {
+				var editor = this;
+				if (val) {
+					var text = editor.textInput.getElement();
+					text.blastCode = true;
+					effect = (val || {}).effect || 2;
+					cm = editor;
+					cmNode = editor.container;
+					init(this);
+				} else if (cm) {
+					var text = editor.textInput.getElement();
+					text.blastCode = false;
+					destroy(this);
+				}
+			},
+			value: false
+		}
+	});
 })();
