@@ -13,10 +13,11 @@
 		}
 
 		/* Codemirror */
-		.Codemirror {
+		.ace_editor {
 			width: 100%;
 			height: 100%;
 			font-size: 20px;
+			margin: 0;
 		}
 
 		</style>
@@ -24,26 +25,17 @@
 
 	<body>
 
-	    <script src="codemirror/lib/codemirror.js"></script>
-	    <script src="codemirror/addon/edit/closetag.js"></script>
-	    <script src="codemirror/mode/xml/xml.js"></script>
-	    <script src="codemirror/mode/javascript/javascript.js"></script>
-	    <script src="codemirror/mode/css/css.js"></script>
-	    <script src="codemirror/mode/htmlmixed/htmlmixed.js"></script>
+	    <script src="ace/ace.js"></script>
 	    <script src="../code-blast.js"></script>
 
+			<pre id="editor"></pre>
+
 	    <script>
-		window.cm = CodeMirror(document.body, {
-			lineNumbers: true,
-			mode:  "htmlmixed",
-			theme: 'monokai',
-			lineWrapping: true,
-			autofocus: true,
-			tabSize: 2,
-			value: "<article>\n  <h1>Code blast plugin for Codmirror</h1>\n  <div class=\"based-on\">\n    Based on Joel Besada's experiment:\n    https://twitter.com/JoelBesada/status/670343885655293952\n  </div>\n  \n  <div>\n\t  Github: https://github.com/chinchang/code-blast-codemirror/\n  </div>\n  \n</article>",
-			autoCloseTags: true,
-			blastCode: { effect: 2 },
-		});
+			document.getElementById('editor').innerText = "<article>\n  <h1>Code blast plugin for Codmirror</h1>\n  <div class=\"based-on\">\n    Based on Joel Besada's experiment:\n    https://twitter.com/JoelBesada/status/670343885655293952\n  </div>\n  \n  <div>\n\t  Github: https://github.com/chinchang/code-blast-codemirror/\n  </div>\n  \n</article>";
+			var editor = ace.edit("editor");
+			editor.setTheme("ace/theme/twilight");
+			editor.session.setMode("ace/mode/html");
+			blastCode(editor);
 	    </script>
 
 	</body>

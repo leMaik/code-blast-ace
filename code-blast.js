@@ -41,16 +41,33 @@ https://twitter.com/JoelBesada/status/670343885655293952
 		}
 	}
 
+	function intersects(r1, r2) {
+		return r1.left < r2.right && r2.left < r1.right &&
+           r1.top < r2.bottom && r2.top < r1.bottom;
+	}
+
 	function spawnParticles(type) {
-		var cursorPos = cm.getCursor();
-		var pos = cm.cursorCoords();
-		var node = document.elementFromPoint(pos.left - 5, pos.top + 5);
-		type = cm.getTokenAt(cursorPos);
-		if (type) { type = type.type; };
+		var cursorPos = cm.getCursorPosition();
+		//TODO hacky!
+		var pos = document.querySelector(".ace_cursor").getClientRects()[0];
+		//pos.left -= 5;
+		var nodes = document.querySelectorAll(".ace_line")[cursorPos.row].querySelectorAll("span");
+		var node = null;
+		for(var i = 0; i < nodes.length; i++) {
+			var n = nodes[i];
+			var r = n.getClientRects()[0];
+			if ((intersects(r, pos) || intersects(pos, r))) {
+					node = n;
+					break;
+			}
+		}
+		if(!node) {
+			console.warn("no node found");
+		}
 		var numParticles = random(PARTICLE_NUM_RANGE.min, PARTICLE_NUM_RANGE.max);
-		var color = getRGBComponents(node);
+		var color = node ? getRGBComponents(node) : [255,255,255];
 		for (var i = numParticles; i--;) {
-			particles[particlePointer] = createParticle(pos.left + 10, pos.top, color);
+			particles[particlePointer] = createParticle(pos.left, pos.top, color);
 			particlePointer = (particlePointer + 1) % MAX_PARTICLES;
 		}
 	}
@@ -195,17 +212,18 @@ https://twitter.com/JoelBesada/status/670343885655293952
 		if (canvas) { canvas.remove(); }
 	}
 
-
-	CodeMirror.defineOption("blastCode", false, function(c, val, old) {
-		if (val) {
-			cm = c;
-			cm.state.blastCode = true;
-			effect = val.effect || 2;
-			cmNode = cm.getWrapperElement();
-			init();
-		} else {
-			destroy();
-		}
-
-	});
+	window.blastCode = function (editor, val) {
+			if (val !== false) {
+				var text = editor.textInput.getElement();
+				text.blastCode = true;
+				effect = (val || {}).effect || 2;
+				cm = editor;
+				cmNode = editor.textInput.getElement();
+				init();
+			} else {
+				var text = editor.textInput.getElement();
+				text.blastCode = false;
+				destroy();
+			}
+		};
 })();
