@@ -48,21 +48,16 @@ https://twitter.com/JoelBesada/status/670343885655293952
 
 	function spawnParticles(type) {
 		var cursorPos = cm.getCursorPosition();
-		//TODO hacky!
-		var pos = document.querySelector(".ace_cursor").getClientRects()[0];
-		//pos.left -= 5;
-		var nodes = document.querySelectorAll(".ace_line")[cursorPos.row].querySelectorAll("span");
+		var pos = cmNode.querySelector(".ace_cursor").getClientRects()[0];
+		var nodes = cmNode.querySelectorAll(".ace_line")[cursorPos.row].querySelectorAll("span");
 		var node = null;
-		for(var i = 0; i < nodes.length; i++) {
-			var n = nodes[i];
-			var r = n.getClientRects()[0];
-			if ((intersects(r, pos) || intersects(pos, r))) {
-					node = n;
-					break;
+		var j = 0;
+		for (var i = 0; i < nodes.length; i++) {
+			j += nodes[i].innerText.length;
+			if (j >= cursorPos.column) {
+				node = nodes[i];
+				break;
 			}
-		}
-		if(!node) {
-			console.warn("no node found");
 		}
 		var numParticles = random(PARTICLE_NUM_RANGE.min, PARTICLE_NUM_RANGE.max);
 		var color = node ? getRGBComponents(node) : [255,255,255];
@@ -218,7 +213,7 @@ https://twitter.com/JoelBesada/status/670343885655293952
 				text.blastCode = true;
 				effect = (val || {}).effect || 2;
 				cm = editor;
-				cmNode = editor.textInput.getElement();
+				cmNode = editor.container;
 				init();
 			} else {
 				var text = editor.textInput.getElement();
