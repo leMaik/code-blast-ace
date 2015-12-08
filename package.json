@@ -1,0 +1,23 @@
+{
+  "name": "code-blast-ace",
+  "version": "1.0.0",
+  "description": "Particles blasts while typing in Ace.",
+  "main": "code-blast.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leMaik/code-blast-ace.git"
+  },
+  "keywords": [
+    "particles",
+    "code",
+    "effect",
+    "ace",
+    "editor"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/leMaik/code-blast-ace/issues"
+  },
+  "homepage": "https://github.com/leMaik/code-blast-ace#readme"
+}
