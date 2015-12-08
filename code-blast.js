@@ -49,7 +49,7 @@ https://twitter.com/JoelBesada/status/670343885655293952
 		}
 
 		function spawnParticles(type) {
-			var cursorPos = editor.getCursorPosition();
+			var cursorPos = editor.getCursorPositionScreen();
 			var pos = editorCtn.querySelector(".ace_cursor").getClientRects()[0];
 			var lines = editorCtn.querySelectorAll(".ace_line");
 			if (lines.length > cursorPos.row) {
