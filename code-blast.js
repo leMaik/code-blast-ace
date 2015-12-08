@@ -5,8 +5,7 @@ https://twitter.com/JoelBesada/status/670343885655293952
 
 ;(function () {
 	function codeBlast(editor, effect) {
-		var cm = editor;
-		var cmNode = editor.container;
+		var editorCtn = editor.container;
 
 		var shakeTime = 0,
 			shakeTimeMax = 0,
@@ -50,9 +49,9 @@ https://twitter.com/JoelBesada/status/670343885655293952
 		}
 
 		function spawnParticles(type) {
-			var cursorPos = cm.getCursorPosition();
-			var pos = cmNode.querySelector(".ace_cursor").getClientRects()[0];
-			var lines = cmNode.querySelectorAll(".ace_line");
+			var cursorPos = editor.getCursorPosition();
+			var pos = editorCtn.querySelector(".ace_cursor").getClientRects()[0];
+			var lines = editorCtn.querySelectorAll(".ace_line");
 			if (lines.length > cursorPos.row) {
 				var nodes = lines[cursorPos.row].querySelectorAll("span");
 				var node = null;
@@ -174,7 +173,7 @@ https://twitter.com/JoelBesada/status/670343885655293952
 				var magnitude = (shakeTime / shakeTimeMax) * shakeIntensity;
 				var shakeX = random(-magnitude, magnitude);
 				var shakeY = random(-magnitude, magnitude);
-				cmNode.style.transform = 'translate(' + shakeX + 'px,' + shakeY + 'px)';
+				editorCtn.style.transform = 'translate(' + shakeX + 'px,' + shakeY + 'px)';
 			}
 			drawParticles();
 			requestAnimationFrame(loop);
@@ -204,13 +203,13 @@ https://twitter.com/JoelBesada/status/670343885655293952
 			isActive = true;
 			loop();
 
-			cm.on("change", onCodeMirrorChange);
+			editor.on("change", onCodeMirrorChange);
 		}
 
 		function destroy() {
 			isActive = false;
-			cm.off('change', onCodeMirrorChange);
-			cmNode.style.transform = '';
+			editor.off('change', onCodeMirrorChange);
+			editorCtn.style.transform = '';
 			if (canvas) { canvas.remove(); }
 		}
 
@@ -227,10 +226,10 @@ https://twitter.com/JoelBesada/status/670343885655293952
 			set: function (val) {
 				if (val) {
 					var effect = val == true ? 2 : (val || {}).effect || 2;
-					this.codeBlast = codeBlast(this, effect);
-				} else if (this.codeBlast) {
-					this.codeBlast.destroy();
-					delete this.codeBlast;
+					this._codeBlast = codeBlast(this, effect);
+				} else if (this._codeBlast) {
+					this._codeBlast.destroy();
+					delete this._codeBlast;
 				}
 			},
 			value: false
