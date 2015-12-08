@@ -190,7 +190,7 @@ https://twitter.com/JoelBesada/status/670343885655293952
 			ctx = canvas.getContext('2d'),
 
 			canvas.id = 'code-blast-canvas'
-			canvas.style.position = 'absolute';
+			canvas.style.position = 'fixed';
 			canvas.style.top = 0;
 			canvas.style.left = 0;
 			canvas.style.zIndex = 1;
@@ -199,6 +199,10 @@ https://twitter.com/JoelBesada/status/670343885655293952
 			canvas.height = h;
 
 			document.body.appendChild(canvas);
+			window.addEventListener('resize', function() {
+				canvas.width = w = window.innerWidth;
+				canvas.height = h = window.innerHeight;
+			})
 
 			isActive = true;
 			loop();
