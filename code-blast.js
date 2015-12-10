@@ -53,16 +53,12 @@ https://twitter.com/JoelBesada/status/670343885655293952
 			var pos = editorCtn.querySelector(".ace_cursor").getClientRects()[0];
 			var lines = editorCtn.querySelectorAll(".ace_line");
 			if (lines.length > cursorPos.row) {
-				var nodes = lines[cursorPos.row].querySelectorAll("span");
-				var node = null;
-				var j = 0;
-				for (var i = 0; i < nodes.length; i++) {
-					j += nodes[i].innerText.length;
-					if (j >= cursorPos.column) {
-						node = nodes[i];
-						break;
-					}
-				}
+				var nodes = Array.prototype.filter.call(lines[cursorPos.row].querySelectorAll('span'), function(x) {
+					return x.getClientRects()[0].left < pos.left - 5;
+				});
+				var node = Array.prototype.sort.call(nodes, function (a, b) {
+					return b.getClientRects()[0].left - a.getClientRects()[0].left;
+				})[0];
 				var numParticles = random(PARTICLE_NUM_RANGE.min, PARTICLE_NUM_RANGE.max);
 				var color = node ? getRGBComponents(node) : [255,255,255];
 				for (var i = numParticles; i--;) {
