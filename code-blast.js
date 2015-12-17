@@ -48,23 +48,23 @@ https://twitter.com/JoelBesada/status/670343885655293952
 	           r1.top < r2.bottom && r2.top < r1.bottom;
 		}
 
+		function getCursorPosition() {
+			var pos = editor.renderer.$cursorLayer.getPixelPosition();
+    	pos.left += editor.renderer.gutterWidth + 4;
+    	pos.top -= editor.renderer.scrollTop;
+	    return pos;
+		}
+
 		function spawnParticles(type) {
-			var cursorPos = editor.getCursorPositionScreen();
-			var pos = editorCtn.querySelector(".ace_cursor").getClientRects()[0];
-			var lines = editorCtn.querySelectorAll(".ace_line");
-			if (lines.length > cursorPos.row) {
-				var nodes = Array.prototype.filter.call(lines[cursorPos.row].querySelectorAll('span'), function(x) {
-					return x.getClientRects()[0].left < pos.left - 5;
-				});
-				var node = Array.prototype.sort.call(nodes, function (a, b) {
-					return b.getClientRects()[0].left - a.getClientRects()[0].left;
-				})[0];
-				var numParticles = random(PARTICLE_NUM_RANGE.min, PARTICLE_NUM_RANGE.max);
-				var color = node ? getRGBComponents(node) : [255,255,255];
-				for (var i = numParticles; i--;) {
-					particles[particlePointer] = createParticle(pos.left, pos.top, color);
-					particlePointer = (particlePointer + 1) % MAX_PARTICLES;
-				}
+			var pos = getCursorPosition();
+			var classes = '.ace_' + type.split('.').join('.ace_');
+			var node = editorCtn.querySelector(classes); //a node that is the same token as ours
+
+			var numParticles = random(PARTICLE_NUM_RANGE.min, PARTICLE_NUM_RANGE.max);
+			var color = node ? getRGBComponents(node) : [255,255,255];
+			for (var i = numParticles; i--;) {
+				particles[particlePointer] = createParticle(pos.left, pos.top, color);
+				particlePointer = (particlePointer + 1) % MAX_PARTICLES;
 			}
 		}
 
@@ -175,9 +175,16 @@ https://twitter.com/JoelBesada/status/670343885655293952
 			requestAnimationFrame(loop);
 		}
 
-		function onCodeMirrorChange() {
+		function onCodeMirrorChange(e) {
 			throttledShake(0.3);
-			throttledSpawnParticles();
+
+			setTimeout(function() {
+				var pos = e.action == 'insert' ? e.end : e.start;
+				var token = editor.session.getTokenAt(pos.row, pos.column);
+				if (token) {
+					throttledSpawnParticles(token.type);
+				}
+			});
 		}
 
 
