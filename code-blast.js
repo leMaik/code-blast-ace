@@ -123,11 +123,26 @@ https://twitter.com/JoelBesada/status/670343885655293952
 		function drawParticles(timeDelta) {
 			var particle;
 			for (var i = particles.length; i--;) {
-				particle = particles[i];
-				if (!particle || particle.alpha < 0.01 || particle.size <= 0.5) { continue; }
+    		particle = particles[i];
+				if (!particle || particle.alpha < 0.01 || particle.size <= 0.5) {
+					continue;
+				}
 
-				if (effect === 1) { effect1(particle); }
-				else if (effect === 2) { effect2(particle); }
+				switch (effect) {
+					case 1:
+						effect1(particle);
+						break;
+					case 2:
+						effect2(particle);
+						break;
+				}
+			}
+
+			if (particles.length > 200) {
+				//cleanup old particles (only when > 200, to prevent frequent copying)
+				particles = particles.filter(function (particle) {
+					return particle.alpha >= 0.01 && particle.size > 0.5;
+				});
 			}
 		}
 
