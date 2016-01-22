@@ -50,8 +50,8 @@ https://twitter.com/JoelBesada/status/670343885655293952
 
 		function getCursorPosition() {
 			var pos = editor.renderer.$cursorLayer.getPixelPosition();
-    	pos.left += editor.renderer.gutterWidth + 4;
-    	pos.top -= editor.renderer.scrollTop;
+    	pos.left += editor.renderer.gutterWidth + editorCtn.getClientRects()[0].left - editor.renderer.scrollLeft;
+    	pos.top += editorCtn.getClientRects()[0].top - editor.renderer.scrollTop;
 	    return pos;
 		}
 
