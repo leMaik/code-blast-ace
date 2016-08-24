@@ -3,7 +3,21 @@ Based on Joel Besada's lovely experiment
 https://twitter.com/JoelBesada/status/670343885655293952
  */
 
-;(function () {
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD. Register as an anonymous module.
+        define([], factory);
+    } else if (typeof module === 'object' && module.exports) {
+        // Node. Does not work with strict CommonJS, but
+        // only CommonJS-like environments that support module.exports,
+        // like Node.
+        module.exports = factory();
+    } else {
+        // Browser globals (root is window)
+        root.codeBlastAce = factory();
+  }
+}(this, function () {
+  return function (ace) {
 	function codeBlast(editor, effect) {
 		var editorCtn = editor.container;
 
@@ -241,8 +255,8 @@ https://twitter.com/JoelBesada/status/670343885655293952
 		};
 	};
 
-	var Editor = ace.require('ace/editor').Editor;
-	var config = ace.require('ace/config');
+	var Editor = (ace.require || ace.acequire)('ace/editor').Editor;
+	var config = (ace.require || ace.acequire)('ace/config');
 	config.defineOptions(Editor.prototype, 'editor', {
 		blastCode: {
 			set: function (val) {
@@ -257,4 +271,5 @@ https://twitter.com/JoelBesada/status/670343885655293952
 			value: false
 		}
 	});
-})();
+  }
+}));
