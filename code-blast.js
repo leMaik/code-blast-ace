@@ -205,9 +205,9 @@ https://twitter.com/JoelBesada/status/670343885655293952
 		}
 
 		function onCodeMirrorChange(e) {
-			throttledShake(0.3);
-
 			setTimeout(function() {
+				if (!e) e = { start: editor.getCursorPosition() };
+				throttledShake(0.3);
 				var pos = e.action == 'insert' ? e.end : e.start;
 				var token = editor.session.getTokenAt(pos.row, pos.column);
 				if (token) {
@@ -225,33 +225,36 @@ https://twitter.com/JoelBesada/status/670343885655293952
 			canvas.style.position = 'fixed';
 			canvas.style.top = 0;
 			canvas.style.left = 0;
-			canvas.style.zIndex = 1;
+			canvas.style.zIndex = 2147483647;
 			canvas.style.pointerEvents = 'none';
 			canvas.width = w;
 			canvas.height = h;
 
 			document.body.appendChild(canvas);
-			window.addEventListener('resize', function() {
-				canvas.width = w = window.innerWidth;
-				canvas.height = h = window.innerHeight;
-			})
+			window.addEventListener('resize', resizeCanvas);
 
 			isActive = true;
 			loop();
 
 			editor.on("change", onCodeMirrorChange);
 		}
+		function resizeCanvas() {
+			canvas.width = w = window.innerWidth;
+			canvas.height = h = window.innerHeight;
+		}
 
 		function destroy() {
 			isActive = false;
 			editor.off('change', onCodeMirrorChange);
+			window.removeEventListener('resize', resizeCanvas);
 			editorCtn.style.transform = '';
 			if (canvas) { canvas.remove(); }
 		}
 
 		init();
 		return {
-			destroy: destroy
+			destroy: destroy,
+			blastAway: onCodeMirrorChange
 		};
 	};
 
@@ -260,13 +263,14 @@ https://twitter.com/JoelBesada/status/670343885655293952
 	config.defineOptions(Editor.prototype, 'editor', {
 		blastCode: {
 			set: function (val) {
+				if (this._codeBlast) {
+					this._codeBlast.destroy();
+					this._codeBlast = null;
+				}
 				if (val) {
 					var effect = val == true ? 2 : (val || {}).effect || 2;
 					this._codeBlast = codeBlast(this, effect);
-				} else if (this._codeBlast) {
-					this._codeBlast.destroy();
-					delete this._codeBlast;
-				}
+				} 
 			},
 			value: false
 		}
