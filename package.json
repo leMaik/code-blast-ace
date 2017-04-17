@@ -1,6 +1,6 @@
 {
   "name": "code-blast-ace",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Particles blasts while typing in Ace.",
   "main": "code-blast.js",
   "repository": {
